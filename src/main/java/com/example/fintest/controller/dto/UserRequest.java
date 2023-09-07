@@ -35,6 +35,7 @@ public class UserRequest {
     private LocalDate birthdate;
 
     @Parameter(description = "Паспорт (Серия и номер")
+    @Pattern(regexp = "^\\d{4} \\d{6}$", message = "Номер и серия паспорта должны быть в формате XXXX XXXXXX")
     private String passportNumber;
 
     @Parameter(description = "Место рождения")
