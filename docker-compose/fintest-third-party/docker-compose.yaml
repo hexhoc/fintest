@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    command:
+      # configuration for logging. All this config properties we can also set in postgres.conf.conf
+      - "postgres"
+      - "-c"
+      - "log_statement=all"
+      - "-c"
+      - "log_directory=log"
+      - "-c"
+      - "log_filename=postgresql-%Y-%m-%d_%H%M%S.log"
+      - "-c"
+      - "logging_collector=on"
+      - "-c"
+      - "log_min_error_statement=error"
+      - "-c"
+      - "log_rotation_age=60"
+    volumes:
+      - ./config/postgres/init_scripts:/docker-entrypoint-initdb.d
+    networks:
+      - fintest-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  fintest-network:
+    external: true
