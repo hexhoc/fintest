@@ -50,7 +50,7 @@ public class UserController {
      *
      * @return DTO сохраненного пользователя
      */
-    @PostMapping
+    //TODO: Сделать перегрузку метода в зависимости от заголовка. В каждом перегруженном методе нужно сделать проверку в зависимости от маркерного интерфейса которым помечены проверяемые поля.@Validated({MailValidation.class}
     public ResponseEntity<Object> create(
             @RequestHeader("x-source") String xSource,
             @Valid @RequestBody UserRequest userRequest) {
