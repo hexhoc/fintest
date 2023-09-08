@@ -32,7 +32,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -48,31 +47,56 @@ public class UserController {
     private final UserService userService;
 
     /**
-     * Создание заявки на испытание.
+     * Создание пользователя из почты.
      *
      * @param userRequest
      *         данные редактирования пользователя
      *
      * @return DTO сохраненного пользователя
      */
+    @Operation(summary = "Создание пользователя")
     @PostMapping(headers = {"x-source=" + XSourceEnum.MAIL})
     public ResponseEntity<UserResponse> createMail(
             @Validated({MailValidation.class}) @RequestBody UserRequest userRequest) {
         return ResponseEntity.ok(userService.create(userRequest));
     }
 
+    /**
+     * Создание пользователя из мобильного.
+     *
+     * @param userRequest
+     *         данные редактирования пользователя
+     *
+     * @return DTO сохраненного пользователя
+     */
     @PostMapping(headers = {"x-source=" + XSourceEnum.MOBILE})
     public ResponseEntity<UserResponse> createMobile(
             @Validated({MobileValidation.class}) @RequestBody UserRequest userRequest) {
         return ResponseEntity.ok(userService.create(userRequest));
     }
 
+    /**
+     * Создание пользователя из банка.
+     *
+     * @param userRequest
+     *         данные редактирования пользователя
+     *
+     * @return DTO сохраненного пользователя
+     */
     @PostMapping(headers = {"x-source=" + XSourceEnum.BANK})
     public ResponseEntity<UserResponse> createBank(
             @Validated({BankValidation.class}) @RequestBody UserRequest userRequest) {
         return ResponseEntity.ok(userService.create(userRequest));
     }
 
+    /**
+     * Создание пользователя из госуслуг.
+     *
+     * @param userRequest
+     *         данные редактирования пользователя
+     *
+     * @return DTO сохраненного пользователя
+     */
     @PostMapping(headers = {"x-source=" + XSourceEnum.GOSUSLUGI})
     public ResponseEntity<UserResponse> createGosuslugi(
             @Validated({GosuslugiValidation.class}) @RequestBody UserRequest userRequest) {
@@ -87,18 +111,7 @@ public class UserController {
      *
      * @return DTO пользователя.
      */
-    @Operation(
-            summary = "Получение учетной записи пользователя по id",
-            responses = @ApiResponse(
-                    responseCode = "200",
-                    description = "OK",
-                    content = {
-                            @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = UserResponse.class))
-                    }
-            )
-    )
+    @Operation(summary = "Получение учетной записи пользователя по id")
     @GetMapping("/{userId}")
     public ResponseEntity<UserResponse> get(
             @PathVariable @Parameter(description = "ID пользователя") UUID userId
@@ -118,7 +131,7 @@ public class UserController {
      * @param pageable
      *         Информация о пагинации.
      *
-     * @return Список DTO сертификатов.
+     * @return Список DTO пользователей.
      */
     @Operation(summary = "Получение списка пользователей")
     @GetMapping

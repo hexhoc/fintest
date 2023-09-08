@@ -6,10 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.Accessors;
 
 /**
- * Критерии фильтрации для сертификатов качества.
+ * Критерии фильтрации для пользователей.
  */
 @Getter
 @Setter
