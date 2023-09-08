@@ -3,11 +3,15 @@ package com.example.fintest.controller;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+import com.example.fintest.consts.XSourceEnum;
 import com.example.fintest.controller.dto.UserFilterRequest;
 import com.example.fintest.controller.dto.UserRequest;
 import com.example.fintest.controller.dto.UserResponse;
 import com.example.fintest.service.UserService;
-import com.example.fintest.validation.UserRequestValidation;
+import com.example.fintest.validation.marker.BankValidation;
+import com.example.fintest.validation.marker.GosuslugiValidation;
+import com.example.fintest.validation.marker.MailValidation;
+import com.example.fintest.validation.marker.MobileValidation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,6 +27,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,15 +55,27 @@ public class UserController {
      *
      * @return DTO сохраненного пользователя
      */
-    //TODO: Сделать перегрузку метода в зависимости от заголовка. В каждом перегруженном методе нужно сделать проверку в зависимости от маркерного интерфейса которым помечены проверяемые поля.@Validated({MailValidation.class}
-    public ResponseEntity<Object> create(
-            @RequestHeader("x-source") String xSource,
-            @Valid @RequestBody UserRequest userRequest) {
-        var message = UserRequestValidation.isValid(userRequest, xSource);
-        if (!message.isEmpty()) {
-            return ResponseEntity.badRequest().body(message);
-        }
+    @PostMapping(headers = {"x-source=" + XSourceEnum.MAIL})
+    public ResponseEntity<UserResponse> createMail(
+            @Validated({MailValidation.class}) @RequestBody UserRequest userRequest) {
+        return ResponseEntity.ok(userService.create(userRequest));
+    }
 
+    @PostMapping(headers = {"x-source=" + XSourceEnum.MOBILE})
+    public ResponseEntity<UserResponse> createMobile(
+            @Validated({MobileValidation.class}) @RequestBody UserRequest userRequest) {
+        return ResponseEntity.ok(userService.create(userRequest));
+    }
+
+    @PostMapping(headers = {"x-source=" + XSourceEnum.BANK})
+    public ResponseEntity<UserResponse> createBank(
+            @Validated({BankValidation.class}) @RequestBody UserRequest userRequest) {
+        return ResponseEntity.ok(userService.create(userRequest));
+    }
+
+    @PostMapping(headers = {"x-source=" + XSourceEnum.GOSUSLUGI})
+    public ResponseEntity<UserResponse> createGosuslugi(
+            @Validated({GosuslugiValidation.class}) @RequestBody UserRequest userRequest) {
         return ResponseEntity.ok(userService.create(userRequest));
     }
 
